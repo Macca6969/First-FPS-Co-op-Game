@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 7599258537112834170}
   - component: {fileID: 4650738179407755704}
   - component: {fileID: 1186419396242901785}
+  - component: {fileID: 6269699627574916380}
   - component: {fileID: 5666796628817999446}
   - component: {fileID: 6130406859584918540}
   - component: {fileID: 399018736}
@@ -186,15 +187,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  firstSetup: 1
   playerMaxHealth: 100
   disableOnDeath:
   - {fileID: 4650738179407755704}
+  wasEnabled: 
+  characterController: {fileID: 0}
   cam: {fileID: 6130406859207199415}
   playerUI: {fileID: 2480733640205092347}
   playerController: {fileID: 4650738179407755704}
   pistol: {fileID: 5666796628817999446}
   rightHand: {fileID: 4275552831851062589}
-  playerHit: {fileID: 2831613034107436738}
+  audioScript: {fileID: 6269699627574916380}
   healthBarImage: {fileID: 56992205752749484}
   healthTextUI: {fileID: 3411934014469277499}
 --- !u!114 &7599258537112834170
@@ -269,6 +273,23 @@ MonoBehaviour:
   playerController: {fileID: 4650738179407755704}
   lookInput: {x: 0, y: 0}
   movementInput: {x: 0, y: 0}
+--- !u!114 &6269699627574916380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136359542989541306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a77d92d5d1b787348b60881d0e821919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHitSound: {fileID: 2831613034107436738}
+  pistolReload: {fileID: 7478987802302411324}
+  pistolEmpty: {fileID: 6689204347078533286}
+  pistolShot2: {fileID: 8300000, guid: e70eb034c8ae4fe42b00d809716998e4, type: 3}
+  pistolShot: {fileID: 2369477992913885223}
 --- !u!114 &5666796628817999446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283,7 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  blackPistol: {fileID: 8614855556770601433}
+  pistolObj: {fileID: 8614855556770601433}
   isFiring: 0
   isReloading: 0
   muzzleFlash: {fileID: 114141808347865705}
@@ -297,13 +318,11 @@ MonoBehaviour:
   ammoTextUI: {fileID: 2631760706406681303}
   pistolReloadSpeed: 0.8
   needReload: 0
-  pistolReload: {fileID: 7478987802302411324}
-  pistolEmpty: {fileID: 6689204347078533286}
-  playerHitSound: {fileID: 2831613034107436738}
   pistolDamage: 25
   _ID: 
   player: {fileID: 2765812299143844847}
   healthTextUI: {fileID: 3411934014469277499}
+  audioScript: {fileID: 6269699627574916380}
 --- !u!114 &6130406859584918540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2747,7 +2766,7 @@ AudioSource:
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0

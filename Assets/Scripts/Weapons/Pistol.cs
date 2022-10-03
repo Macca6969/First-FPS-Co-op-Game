@@ -10,7 +10,7 @@ public class Pistol : NetworkBehaviour
 {
 #region Variables ~
     [Header("PlayerFire")]
-    [SerializeField] public GameObject blackPistol;
+    [SerializeField] public GameObject pistolObj;
     [SerializeField] public bool isFiring = false;
     [SerializeField] public bool isReloading = false;
     [SerializeField] public GameObject muzzleFlash;
@@ -42,7 +42,7 @@ public class Pistol : NetworkBehaviour
     [Header("Health")]
     public Player player;
     public GameObject healthTextUI;
-   [SerializeField] public AudioScript audioScript;
+   public AudioScript audioScript;
 
    #endregion
 
@@ -56,38 +56,18 @@ public class Pistol : NetworkBehaviour
     
     #region Player Shoots
 
-      public void FirePistol(string _playerID)
+      public void FirePistol()
    {
 
-        //Player tells server who wants to shoot and where from
-         RaycastHit _hit;
-         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit))
-        {
-         if(_hit.collider.tag == "Player")
-         {
-           Debug.Log("We hit " + _hit.collider.gameObject.name);
-           CmdPlayerHit(_hit.collider.name, pistolDamage);
-         }
-         
-        CmdPlayerShoots(_playerID);
-   }
-
-   [Command(requiresAuthority = false)]
-      void CmdPlayerShoots(string _playerID)
-   {
-         //Server tells player and others they are shooting.
-         // *** How to define what player that is? ***
-         RpcFirePistol(_playerID);
-   }
-   
-
-   [ClientRpc]
-    void RpcFirePistol(string _playerID)
-   {
         //Run checks, and shoot the pistol.
-        if (isLocalPlayer && !isFiring && pistolCurrentAmmo >= 1 && !player.isDead) 
+        if (!isFiring && pistolCurrentAmmo >= 1 && !player.isDead) 
          {
             StartCoroutine(FirePistol());
+             string playerShooting = transform.name;
+             Debug.Log(playerShooting + "is shooting.");
+             Vector3 playerLocation = transform.position;
+             Player _playerID = GameManager.GetPlayer(_ID);
+             //CmdPlayerSounds(playerLocation, _playerID);
          }
 
          //Out of ammo.
@@ -95,24 +75,36 @@ public class Pistol : NetworkBehaviour
         {
             audioScript.pistolEmpty.Play();
         }
+
+
         IEnumerator FirePistol()
-        {
+         {
+
+         RaycastHit _hit;
+            if(Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit))
+            {
+               if(_hit.collider.tag == "Player")
+              {
+                  Debug.Log("We hit " + _hit.collider.gameObject.name);
+                  CmdPlayerHit(_hit.collider.name, pistolDamage);
+              }
+            }
+         
         isFiring = true;
-        }
-        blackPistol.GetComponent<Animator>().Play("FirePistol");
-        audioScript.pistolShot.Play();
+        pistolObj.GetComponent<Animator>().Play("FirePistol");
+        //audioScript.pistolShot.Play();
         muzzleFlash.SetActive(true);
         yield return new WaitForSeconds(0.05f);
         muzzleFlash.SetActive(false);
         yield return new WaitForSeconds(0.15f);
-        blackPistol.GetComponent<Animator>().Play("IdlePistol");
+        pistolObj.GetComponent<Animator>().Play("IdlePistol");
         pistolCurrentAmmo = pistolCurrentAmmo - 1;
         ammoTextUI.GetComponent<TMP_Text>().text =  pistolCurrentAmmo + "/" + pistolMaxAmmo;
         isFiring = false;
          }
+
    }
 
- 
          
          [Command(requiresAuthority = false)]
          void CmdPlayerHit(string _playerID, int _damage)
@@ -126,7 +118,7 @@ public class Pistol : NetworkBehaviour
 
          #endregion
 
-         #region Player Reloading
+    #region Player Reloading
 
          
         public void PistolReload()
@@ -151,11 +143,11 @@ public class Pistol : NetworkBehaviour
            {
             Debug.Log ("Reload");
             isReloading = true;
-            blackPistol.GetComponent<Animator>().Play("Reload");
+            pistolObj.GetComponent<Animator>().Play("Reload");
             audioScript.pistolReload.Play();
             yield return new WaitForSeconds (pistolReloadSpeed);
             audioScript.pistolReload.Stop();
-            blackPistol.GetComponent<Animator>().Play("IdlePistol");
+            pistolObj.GetComponent<Animator>().Play("IdlePistol");
             pistolCurrentAmmo = pistolMagSize;
             ammoTextUI.GetComponent<TMP_Text>().text =  pistolCurrentAmmo + "/" + pistolMaxAmmo;
             needReload = false;
@@ -168,3 +160,5 @@ public class Pistol : NetworkBehaviour
 
 
 }
+   
+

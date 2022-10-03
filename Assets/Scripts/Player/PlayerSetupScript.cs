@@ -16,6 +16,7 @@ public PlayerController playerController;
 public PlayerLook playerLook;
 public Camera cam;
 public GameObject playerUI;
+public AudioListener playerListener;
 
 
 private void Start() 
@@ -57,6 +58,7 @@ public override void OnStartLocalPlayer()
   inputController.enabled = true;
   playerController.enabled = true;
   playerLook.enabled = true;
+  playerListener.enabled = true;
 }
 
 private void OnDisable()

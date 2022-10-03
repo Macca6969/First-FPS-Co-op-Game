@@ -58,8 +58,6 @@ public class PlayerController : NetworkBehaviour
     public Player player;
 
 
-
-
    [Header("Scripts")]
    [SerializeField] public Pistol pistol;
 
@@ -197,10 +195,9 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    public void PlayerFire(InputAction.CallbackContext context, string _playerID)
+    public void PlayerFire(InputAction.CallbackContext context)
     {
-        GameManager.GetPlayer (_playerID);
-        pistol.FirePistol(_playerID);
+        pistol.FirePistol();
     }
     
     public void PlayerReload(InputAction.CallbackContext context)
