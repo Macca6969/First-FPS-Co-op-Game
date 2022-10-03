@@ -18,7 +18,7 @@ public class Pistol : NetworkBehaviour
 
     [SerializeField] static float distantFromTarget;
     [SerializeField] float toTarget;
-    [SerializeField] Camera cam;
+    [SerializeField] public Camera cam;
     public bool isDead;
 
      [Header("AmmoDisplay")]
@@ -53,28 +53,36 @@ public class Pistol : NetworkBehaviour
         Animator = GetComponent<Animator>();
      }
 
-
-
     
     #region Player Shoots
 
-      public void FirePistol()
+      public void FirePistol(string _playerID)
    {
-        //Player tells server they want to shoot
-        CmdPlayerShoots();
+
+        //Player tells server who wants to shoot and where from
+         RaycastHit _hit;
+         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit))
+        {
+         if(_hit.collider.tag == "Player")
+         {
+           Debug.Log("We hit " + _hit.collider.gameObject.name);
+           CmdPlayerHit(_hit.collider.name, pistolDamage);
+         }
+         
+        CmdPlayerShoots(_playerID);
    }
 
    [Command(requiresAuthority = false)]
-   public void CmdPlayerShoots()
+      void CmdPlayerShoots(string _playerID)
    {
-         //Server tells player they are shooting.
+         //Server tells player and others they are shooting.
          // *** How to define what player that is? ***
-         RpcFirePistol();
+         RpcFirePistol(_playerID);
    }
    
 
    [ClientRpc]
-   public void RpcFirePistol()
+    void RpcFirePistol(string _playerID)
    {
         //Run checks, and shoot the pistol.
         if (isLocalPlayer && !isFiring && pistolCurrentAmmo >= 1 && !player.isDead) 
@@ -87,19 +95,9 @@ public class Pistol : NetworkBehaviour
         {
             audioScript.pistolEmpty.Play();
         }
-
         IEnumerator FirePistol()
         {
         isFiring = true;
-        RaycastHit _hit;
-        if(Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit))
-        {
-         if(_hit.collider.tag == "Player")
-         {
-            //If we hit a player, ask the server to damage them. CmdPlayerHit is in Player script
-           Debug.Log("We hit " + _hit.collider.gameObject.name);
-           CmdPlayerHit(_hit.collider.name, pistolDamage);
-         }
         }
         blackPistol.GetComponent<Animator>().Play("FirePistol");
         audioScript.pistolShot.Play();

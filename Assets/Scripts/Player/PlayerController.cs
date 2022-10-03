@@ -197,9 +197,10 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    public void PlayerFire(InputAction.CallbackContext context)
+    public void PlayerFire(InputAction.CallbackContext context, string _playerID)
     {
-        pistol.FirePistol();
+        GameManager.GetPlayer (_playerID);
+        pistol.FirePistol(_playerID);
     }
     
     public void PlayerReload(InputAction.CallbackContext context)
